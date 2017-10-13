@@ -3,8 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
 </head>
 <body>
+
+<div class="container">
+  <h1 class="card-title"><i class="fa fa-server"></i> Servers</h1>
+  <h4 class="text-right">
+    <button class="btn btn-link"><i class="fa fa-refresh"></i></button>
+  </h4>
+  <table class="table">
+    <thread>
+      <tr>
+        <th>Name</th>
+        <th>Capacity</th>
+        <th>Volumes</th>
+        <th>Actions</th>
+      </tr>
+    </thread>
+    <tbody>
+    <tr>
+      <td>Web</td>
+      <td>1.0 TB</td>
+      <td>1</td>
+      <td>
+        <button class="btn btn-sm btn-link">
+          <i class="fa fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+    <tr>
+      <td>Cache</td>
+      <td>5.5 TB</td>
+      <td>2</td>
+      <td>
+        <button class="btn btn-sm btn-link">
+          <i class="fa fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
 
 </body>
 </html>
