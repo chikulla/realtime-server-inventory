@@ -7,6 +7,15 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/servers', (req, res) => {
+  const servers = [{
+    name: 'WEB',
+    capacity: 1.0,
+    volumes: 1
+  }];
+  res.send(JSON.stringify(servers))
+});
+
 app.listen(3003, () => {
   console.log('listening');
 });
