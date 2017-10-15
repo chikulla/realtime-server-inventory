@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>Servers</title>
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
+  <script src="node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="node_modules/vue/dist/vue.min.js"></script>
   <style>
     body {
       padding-top: 2rem;
@@ -13,44 +15,96 @@
 </head>
 <body>
 
-<div class="container">
+<div id="app" class="container">
   <h1 class="card-title"><i class="fa fa-server"></i> Servers</h1>
   <h4 class="text-right">
-    <button class="btn btn-link"><i class="fa fa-plus"></i></button>
-    <button class="btn btn-link"><i class="fa fa-refresh"></i></button>
+    <button @click="refresh" class="btn btn-link"><i class="fa fa-refresh"></i></button>
+    <button @click="toggleAddCard" class="btn btn-link">
+      <i class="fa fa-plus"></i>
+    </button>
   </h4>
+
+  <div class="card card-header" v-if="showAddCard">
+    <div class="form-group">
+      <label>Name</label>
+      <input v-model="newServerName" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>OS</label>
+      <select v-model="newServerOs" class="custom-select form-control">
+        <option value="Linux">Linux</option>
+        <option value="VMWare">VMWare</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <div class="pull-right">
+        <button class="btn btn-secondary" @click="cancel">Cancel</button>
+        <button class="btn btn-primary" @click="add">Add</button>
+      </div>
+    </div>
+  </div>
+
   <table class="table">
     <thread>
       <tr>
         <th>Name</th>
+        <th>OS</th>
         <th>Capacity</th>
         <th>Volumes</th>
         <th>Actions</th>
       </tr>
     </thread>
     <tbody>
-    <tr>
-      <td>Web</td>
-      <td>1.0 TB</td>
-      <td>1</td>
+    <tr v-for="s in servers">
+      <td>{{s.name}}</td>
+      <td>{{s.os}}</td>
+      <td>{{s.capacity}}TB</td>
+      <td>{{s.volumes}}</td>
       <td>
-        <button class="btn btn-sm btn-link">
-          <i class="fa fa-trash"></i>
-        </button>
-      </td>
-    </tr>
-    <tr>
-      <td>Cache</td>
-      <td>5.5 TB</td>
-      <td>2</td>
-      <td>
-        <button class="btn btn-sm btn-link">
+        <button @click="del(s.id)" class="btn btn-sm btn-link">
           <i class="fa fa-trash"></i>
         </button>
       </td>
     </tr>
     </tbody>
   </table>
+
+  <script>
+    const app = new Vue({
+      el: '#app',
+      created: function () {
+        this.refresh();
+      },
+      data: {
+        showAddCard: false,
+        servers: [],
+        newServerOs: 'Linux',
+        newServerName: ''
+      },
+      methods: {
+        toggleAddCard: function () {
+          this.showAddCard = !this.showAddCard;
+        },
+        add: function (event) {
+          console.log(`adding ${this.newServerName}:${this.newServerOs}`);
+          this.cancel();
+        },
+        cancel: function () {
+          this.showAddCard = false;
+        },
+        del: function (event) {
+          console.log(`deleting ${event}`);
+        },
+        refresh: function () {
+          console.log('get /servers');
+          $.get('/servers', (d) => {
+            this.servers = JSON.parse(d);
+          });
+        }
+      }
+    });
+  </script>
+
 </div>
 
 </body>

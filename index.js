@@ -8,11 +8,22 @@ app.get('/', (req, res) => {
 });
 
 app.get('/servers', (req, res) => {
-  const servers = [{
-    name: 'WEB',
-    capacity: 1.0,
-    volumes: 1
-  }];
+  const servers = [
+    {
+      id: 0,
+      name: 'WEB',
+      capacity: 1.0,
+      volumes: 1,
+      os: 'Linux'
+    },
+    {
+      id: 1,
+      name: 'Cache',
+      capacity: 5.5,
+      volumes: 3,
+      os: 'Linux'
+    }
+  ];
   res.send(JSON.stringify(servers))
 });
 
