@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
   <script src="node_modules/jquery/dist/jquery.min.js"></script>
   <script src="node_modules/vue/dist/vue.min.js"></script>
+  <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
   <style>
     body {
       padding-top: 2rem;
@@ -75,12 +76,15 @@
       created: function () {
         this.refresh();
         this.clear();
+        this.socket = io('http://localhost:3003');
+        this.initReducer();
       },
       data: {
         showAddCard: false,
         servers: [],
         newServerOs: '',
-        newServerName: ''
+        newServerName: '',
+        socket: undefined,
       },
       methods: {
         toggleAddCard: function () {
@@ -88,10 +92,11 @@
         },
         add: function () {
           console.log(`adding ${this.newServerName}:${this.newServerOs}`);
+          this.socket.emit('add', {name: this.newServerName, os: this.newServerOs});
           this.cancel();
           this.clear();
         },
-        clear: function() {
+        clear: function () {
           this.newServerName = '';
           this.newServerOs = 'Linux';
         },
@@ -100,12 +105,27 @@
         },
         del: function (event) {
           console.log(`deleting ${event}`);
+          this.socket.emit('delete', event);
         },
         refresh: function () {
           console.log('get /servers');
           $.get('/servers', (d) => {
             this.servers = JSON.parse(d);
           });
+        },
+        initReducer: function () {
+          this.socket.on('delete', this.applyDelete);
+
+          this.socket.on('add', this.applyAdd);
+        },
+        applyDelete: function(id) {
+          const index = this.servers.findIndex((s) => s.id === id);
+          if(index > -1) {
+            this.servers.splice(index, 1);
+          }
+        },
+        applyAdd: function(obj) {
+          this.servers.push(obj)
         }
       }
     });
