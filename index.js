@@ -4,6 +4,22 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
 let id = 0;
+let servers = [
+  {
+    id: id++,
+    name: 'WEB',
+    capacity: 1.0,
+    volumes: 1,
+    os: 'Linux'
+  },
+  {
+    id: id++,
+    name: 'Cache',
+    capacity: 5.5,
+    volumes: 3,
+    os: 'Linux'
+  }
+];
 
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
 
@@ -21,37 +37,27 @@ io.on('connection', (socket) => {
   socket.on('delete', (id) => {
     console.log(`deleting: ${id}`);
     io.emit('delete', id);
+    const index = servers.findIndex((s) => s.id === id);
+    if(index > -1) {
+      servers.splice(index, 1);
+    }
   });
 
   socket.on('add', (obj) => {
     console.log(`adding: ${JSON.stringify(obj)}`);
-    io.emit('add', {
+    const server = {
       id: id++,
       name: obj.name,
       os: obj.os,
       capacity: 0,
       volumes: 0
-    });
+    };
+    io.emit('add', server);
+    servers.push(server);
   });
 });
 
 app.get('/servers', (req, res) => {
-  const servers = [
-    {
-      id: id++,
-      name: 'WEB',
-      capacity: 1.0,
-      volumes: 1,
-      os: 'Linux'
-    },
-    {
-      id: id++,
-      name: 'Cache',
-      capacity: 5.5,
-      volumes: 3,
-      os: 'Linux'
-    }
-  ];
   res.send(JSON.stringify(servers))
 });
 
