@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Servers</title>
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
@@ -12,16 +13,27 @@
     body {
       padding-top: 2rem;
     }
+
+    .btn {
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
 <div id="app" class="container">
-  <h1 class="card-title"><i class="fa fa-server"></i> Servers</h1>
+  <h1 class="card-title">
+    <i class="fa fa-server"></i>
+    Servers
+    <i v-if="loading" class="fa fa-refresh fa-spin"></i>
+  </h1>
   <h4 class="text-right">
-    <button @click="refresh" class="btn btn-link"><i class="fa fa-refresh"></i></button>
-    <button @click="toggleAddCard" class="btn btn-link">
+    <button @click="refresh" class="btn btn-sm btn-primary"><i class="fa fa-refresh"></i></button>
+    <button v-if="!showAddCard" @click="toggleAddCard" class="btn btn-sm btn-outline-primary">
       <i class="fa fa-plus"></i>
+    </button>
+    <button v-if="showAddCard" @click="toggleAddCard" class="btn btn-sm btn-primary">
+      <i class="fa fa-minus"></i>
     </button>
   </h4>
 
@@ -35,6 +47,7 @@
       <select v-model="newServerOs" class="custom-select form-control">
         <option value="Linux">Linux</option>
         <option value="VMWare">VMWare</option>
+        <option value="Windows">Windows</option>
       </select>
     </div>
     <div class="form-group">
@@ -45,30 +58,32 @@
     </div>
   </div>
 
-  <table class="table">
-    <thread>
-      <tr>
-        <th>Name</th>
-        <th>OS</th>
-        <th>Capacity</th>
-        <th>Volumes</th>
-        <th>Actions</th>
+  <div class="table-responsive">
+    <table class="table">
+      <thread>
+        <tr>
+          <th class="col-xs-3">Name</th>
+          <th>OS</th>
+          <th>Capacity</th>
+          <th>Volumes</th>
+          <th></th>
+        </tr>
+      </thread>
+      <tbody>
+      <tr v-for="s in servers">
+        <td class="col-xs-3">{{s.name}}</td>
+        <td>{{s.os}}</td>
+        <td>{{s.capacity}}TB</td>
+        <td>{{s.volumes}}</td>
+        <td>
+          <button @click="del(s.id)" class="btn btn-sm btn-link">
+            <i class="fa fa-trash"></i>
+          </button>
+        </td>
       </tr>
-    </thread>
-    <tbody>
-    <tr v-for="s in servers">
-      <td>{{s.name}}</td>
-      <td>{{s.os}}</td>
-      <td>{{s.capacity}}TB</td>
-      <td>{{s.volumes}}</td>
-      <td>
-        <button @click="del(s.id)" class="btn btn-sm btn-link">
-          <i class="fa fa-trash"></i>
-        </button>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </div>
 
   <script>
     const app = new Vue({
@@ -85,6 +100,7 @@
         newServerOs: '',
         newServerName: '',
         socket: undefined,
+        loading: false,
       },
       methods: {
         toggleAddCard: function () {
@@ -108,9 +124,11 @@
           this.socket.emit('delete', event);
         },
         refresh: function () {
+          this.loading = true;
           console.log('get /servers');
           $.get('/servers', (d) => {
             this.servers = JSON.parse(d);
+            this.loading = false;
           });
         },
         initReducer: function () {
@@ -118,13 +136,13 @@
 
           this.socket.on('add', this.applyAdd);
         },
-        applyDelete: function(id) {
+        applyDelete: function (id) {
           const index = this.servers.findIndex((s) => s.id === id);
-          if(index > -1) {
+          if (index > -1) {
             this.servers.splice(index, 1);
           }
         },
-        applyAdd: function(obj) {
+        applyAdd: function (obj) {
           this.servers.push(obj)
         }
       }

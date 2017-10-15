@@ -24,6 +24,7 @@ let servers = [
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
 
 app.get('/', (req, res) => {
+  console.log(res.connection.remoteAddress);
   res.sendFile(__dirname + '/index.html');
 });
 
@@ -35,7 +36,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('delete', (id) => {
-    console.log(`deleting: ${id}`);
+    console.log(`${socket.handshake.address}:deleting: ${id}`);
     io.emit('delete', id);
     const index = servers.findIndex((s) => s.id === id);
     if(index > -1) {
@@ -44,7 +45,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('add', (obj) => {
-    console.log(`adding: ${JSON.stringify(obj)}`);
+    console.log(`${socket.handshake.address}:adding: ${JSON.stringify(obj)}`);
     const server = {
       id: id++,
       name: obj.name,
