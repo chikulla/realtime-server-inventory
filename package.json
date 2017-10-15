@@ -1,5 +1,5 @@
 {
-  "name": "mlgrm",
+  "name": "realtime-server-inventory",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,17 +7,14 @@
     "start": "node index.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Chikura Hara",
   "dependencies": {
-    "axios": "^0.16.2",
     "bootstrap": "4.0.0-alpha.6",
     "express": "4.16.2",
     "font-awesome": "4.7.0",
     "jquery": "^3.2.1",
-    "socket.io": "^2.0.3",
-    "socket.io-client": "^2.0.3",
-    "vue": "2.5.2",
-    "vue-resource": "1.3.4"
+    "socket.io": "2.0.3",
+    "socket.io-client": "2.0.3",
+    "vue": "2.5.2"
   }
 }
