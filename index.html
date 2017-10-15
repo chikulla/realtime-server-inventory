@@ -74,20 +74,26 @@
       el: '#app',
       created: function () {
         this.refresh();
+        this.clear();
       },
       data: {
         showAddCard: false,
         servers: [],
-        newServerOs: 'Linux',
+        newServerOs: '',
         newServerName: ''
       },
       methods: {
         toggleAddCard: function () {
           this.showAddCard = !this.showAddCard;
         },
-        add: function (event) {
+        add: function () {
           console.log(`adding ${this.newServerName}:${this.newServerOs}`);
           this.cancel();
+          this.clear();
+        },
+        clear: function() {
+          this.newServerName = '';
+          this.newServerOs = 'Linux';
         },
         cancel: function () {
           this.showAddCard = false;
